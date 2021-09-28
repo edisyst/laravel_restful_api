@@ -1,0 +1,51 @@
+<?php
+
+namespace {{ namespace }};
+
+use {{ namespacedModel }};
+use {{ rootNamespace }}Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+
+
+class {{ class }} extends Controller
+{
+    public function index(): JsonResponse
+    {
+        ${{ modelVariable }}s = {{ model }}::all();
+
+        return response()->json(${{ modelVariable }}s);
+    }
+
+
+
+    public function store(Request $request): JsonResponse
+    {
+        ${{ modelVariable }} = {{ model }}::create($request->validated());
+
+        return response()->json(${{ modelVariable }});
+    }
+
+
+    public function show({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        return response()->json(${{ modelVariable }}); // forse basta questo
+//        return new EmployeeSingleResource($employee);  // è un JsonResource
+    }
+
+
+    public function update(Request $request, {{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->update($request->validated());
+
+        return response()->json(${{ modelVariable }});
+    }
+
+
+    public function destroy({{ model }} ${{ modelVariable }}): JsonResponse
+    {
+        ${{ modelVariable }}->delete();
+
+        return response()->json('Deleted successfully');
+    }
+}
