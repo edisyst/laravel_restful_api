@@ -27,11 +27,11 @@ class StudentClassController3 extends Controller
 //    }
 
 
-    public function show(StudentClass $studentClass): JsonResponse
-    {
-        return response()->json($studentClass); // forse basta questo
-//        return new EmployeeSingleResource($employee);  // è un JsonResource
-    }
+//    public function show(StudentClass $studentClass): JsonResponse
+//    {
+//        return response()->json($studentClass); // forse basta questo
+////        return new EmployeeSingleResource($employee);  // è un JsonResource
+//    }
 
 
     public function update(Request $request, StudentClass $studentClass): JsonResponse
@@ -42,10 +42,10 @@ class StudentClassController3 extends Controller
     }
 
 
-    public function destroy(StudentClass $studentClass): JsonResponse
-    {
-        $studentClass->delete();
-
-        return response()->json('Deleted successfully');
-    }
+//    public function destroy(StudentClass $studentClass): JsonResponse
+//    {
+//        $studentClass->delete();
+//
+//        return response()->json('Deleted successfully');
+//    }
 }
