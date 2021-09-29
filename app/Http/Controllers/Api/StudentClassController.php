@@ -7,6 +7,7 @@ use App\Models\StudentClass;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class StudentClassController extends Controller
 {
@@ -49,50 +50,94 @@ class StudentClassController extends Controller
     }
 
 
+
+
     public function store(Request $request)//: JsonResponse
     {
-        // MANCA IL MESSAGGIO DI VALIDAZIONE (ES: ERRORE UNIQUE)
-        $request->validate([
+        $rules = array(
             'name' => 'required|unique:student_classes|max:30'
-        ]);
+        );
 
-        $data = array() ;
-        $data['name'] = $request->name;
+        $errors = array(
+            'name.required' => 'Il nome è obbligatorio',
+//            'name.unique' => 'Il nome deve essere univoco',
+        );
 
-        $studentClass = StudentClass::create($data);
+        $validator = Validator::make($request->all(), $rules, $errors);
 
-        return response()->json($studentClass);
+        if (($validator->fails())) {
+//            return $validator->errors();  //DEBUG
+            return response()->json($validator->errors(), 401);
+
+        } else {
+            $class = new StudentClass([
+                'name' => $request->name,
+            ]);
+            if ($class->save()) {
+                return response()->json($class, 201);
+            } else {
+                return ["Result" => "Operazione fallita"];
+            }
+        }
     }
 
 
-    public function show($id): JsonResponse
-    {
-        $show = DB::table('student_classes')->where('id', $id)->first();
 
-        return response()->json($show);
+
+    public function show(StudentClass $class) // : JsonResponse
+    {
+//        return StudentClass::find($class)->first();
+//        dd($class);
+
+        if ( $class === null )  // non entra in questo controllo
+        {
+            return response()->json("Elemento non trovato", 414);
+        }
+        return response()->json($class, 200);
     }
 
 
-    public function update(Request $request, $id)
+
+
+    public function update(Request $request, StudentClass $class)
     {
-        // MANCA IL MESSAGGIO DI VALIDAZIONE (ES: ERRORE UNIQUE)
-        $request->validate([
+        //PARADOSSALMENTE ORA MI DA' ERRORE SE REINVIO LO STESSO VALORE DI name
+        //DEVO CERCARE DI FARE IL CHECK SULL'ESISTENZA DEL RECORD
+        $rules = array(
             'name' => 'required|unique:student_classes|max:30'
-        ]);
+        );
 
-        $update = DB::table('student_classes')->where('id', $id)->first();
-        $update->update([
-            'name' => $request->name
-        ]);
+        $errors = array(
+            'name.required' => 'Il nome è obbligatorio',
+//            'name.unique' => 'Il nome deve essere univoco',
+        );
 
-        return response()->json($update);
+        $validator = Validator::make($request->all(), $rules, $errors);
+
+        if (($validator->fails())) {
+//            return $validator->errors();  //DEBUG
+            return response()->json($validator->errors(), 401);
+
+        } else {
+            $class->update([
+                'name' => $request->name,
+            ]);
+            if ($class->save()) {
+                return response()->json($class, 202);
+            } else {
+                return ["Result" => "Operazione fallita"];
+            }
+        }
     }
 
 
-    public function destroy(StudentClass $studentClass): JsonResponse
+    public function destroy(StudentClass $class): JsonResponse
     {
-        $studentClass->delete();
+        //DEVO CERCARE DI FARE IL CHECK SULL'ESISTENZA DEL RECORD
+        $class->delete();
 
-        return response()->json('Deleted successfully');
+        return response()->json('Deleted successfully',244);
+        //se metto come status=204 non mi scrive il messaggio
     }
 }
+
