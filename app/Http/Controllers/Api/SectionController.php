@@ -2,41 +2,39 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Models\Subject;
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use App\Models\Section;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
 
-class SubjectController extends Controller
+class SectionController extends Controller
 {
     public function index(): JsonResponse
     {
-        $subjects = Subject::all();
+        $sections = Section::all();
 
-        return response()->json($subjects);
+        return response()->json($sections);
     }
+
 
 
     public function store(Request $request): JsonResponse
     {
         $rules = array(
             'class_id' => 'required',
-            'code' => 'required|max:6',
             'name' => 'required|min:6|max:25',
         );
 
         $validator = Validator::make($request->all(), $rules);
 
         if (($validator->fails())) {
-//            return $validator->errors();  //DEBUG
             return response()->json($validator->errors(), 401);
 
         } else {
-            $subject = new Subject([
+            $subject = new Section([
                 'name' => $request->name,
-                'code' => $request->code,
                 'class_id' => $request->class_id,
             ]);
             if ($subject->save()) {
@@ -48,17 +46,16 @@ class SubjectController extends Controller
     }
 
 
-    public function show(Subject $subject): JsonResponse
+    public function show(Section $section): JsonResponse
     {
-        return response()->json($subject); // forse basta questo
+        return response()->json($section); // forse basta questo
     }
 
 
-    public function update(Request $request, Subject $subject): JsonResponse
+    public function update(Request $request, Section $section): JsonResponse
     {
         $rules = array(
             'class_id' => 'required',
-            'code' => 'required|max:6',
             'name' => 'required|min:6|max:25',
         );
 
@@ -68,13 +65,12 @@ class SubjectController extends Controller
             return response()->json($validator->errors(), 401);
 
         } else {
-            $subject->update([
+            $section->update([
                 'name' => $request->name,
-                'code' => $request->code,
                 'class_id' => $request->class_id,
             ]);
-            if ($subject->save()) {
-                return response()->json($subject, 202);
+            if ($section->save()) {
+                return response()->json($section, 202);
             } else {
                 return ["Result" => "Operazione fallita"];
             }
@@ -82,9 +78,9 @@ class SubjectController extends Controller
     }
 
 
-    public function destroy(Subject $subject): JsonResponse
+    public function destroy(Section $section): JsonResponse
     {
-        $subject->delete();
+        $section->delete();
 
         return response()->json('Deleted successfully');
     }
